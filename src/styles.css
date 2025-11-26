@@ -1,7 +1,30 @@
 @import "./t-normalize.css";
 
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 h1 {
     font-size: 2rem;
     font-weight: bold;
     text-align: center;
+    padding-top: 1rem;
+}
+
+div.container {
+    display: flex;
+}
+
+div.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 3rem);
+    grid-template-rows: repeat(10, 3rem);
+    margin: 3rem;
+}
+
+.grid > * {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px white solid;
 }

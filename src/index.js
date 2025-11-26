@@ -1,20 +1,27 @@
 import { Player } from "./player.js";
 import { Ship } from "./ship.js";
-import { Observer } from "./observer.js";
+import { Subject, Observer } from "./observer.js";
 import {
     createEventListeners,
+    displayPlacedShips,
     displayShips,
     displayAttackedSquare,
 } from "./dom-controller.js";
 
+// Game state initialization
+let gameState = "combat"; // possible states: position, combat, ended
+const playerTurn = new Subject(false); // state false for player 1 turn and true for player 2 turn
+const turnObserver = new Observer("turnObserver", onTurnChange);
+playerTurn.subscribe(turnObserver);
+
 // Player 1 initialization
 const p1 = new Player("human");
-const p1observer = new Observer("p1observer", p1obs);
+const p1observer = new Observer("p1observer", onBoardChange);
 p1.board.subject.subscribe(p1observer);
 
 // Player 2 initialization
 const p2 = new Player("computer");
-const p2observer = new Observer("p1observer", p2obs);
+const p2observer = new Observer("p1observer", onBoardChange);
 p2.board.subject.subscribe(p2observer);
 
 // Player 1 ship initialization
@@ -30,6 +37,7 @@ p1.board.placeShip([3, 0], true, P1mediumShip2);
 p1.board.placeShip([7, 6], false, P1smallShip);
 
 // Player 2 ship initialization
+playerTurn.state = true;
 const P2hugeShip = new Ship(5);
 const P2bigShip = new Ship(4);
 const P2mediumShip = new Ship(3);
@@ -44,23 +52,29 @@ p2.board.placeShip([1, 7], true, P2smallShip);
 // Event listener initialization
 createEventListeners(p1, p2);
 
-// Game state initialization
-let gameState = "combat"; // possible states: position, combat, ended
-let playerTurn = 0; // 0 for player 1 turn and 1 for player 2 turn
+// Combat phase start
+playerTurn.setState(false);
 
 // ========== FUNCTIONS ==========
-function p1obs(state) {
+// Updates the board display dynamically based on the specified board state
+function onBoardChange(state) {
     if (state[0] === "shipPlaced") {
-        displayShips(p1, "left", state[1]);
+        displayPlacedShips(playerTurn.state, state[1]);
     } else if (state[0] === "attackReceived") {
-        displayAttackedSquare(p1, "left", state[1]);
+        displayAttackedSquare(playerTurn.state, state[1], state[2]);
+
+        // If the attack does not hit a ship
+        if (!state[2]) {
+            playerTurn.setState(!playerTurn.state);
+        }
     }
 }
 
-function p2obs(state) {
-    if (state[0] === "shipPlaced") {
-        displayShips(p2, "right", state[1]);
-    } else if (state[0] === "attackReceived") {
-        displayAttackedSquare(p2, "right", state[1]);
+// Updates board display based on provided state
+function onTurnChange(state) {
+    if (!state) {
+        displayShips(p1, p2, state);
+    } else {
+        displayShips(p2, p1, state);
     }
 }

@@ -4,6 +4,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: whitesmoke;
 }
 
 h1 {
@@ -26,12 +27,8 @@ div.grid {
 
 .grid > * {
     background: rgb(182, 207, 255);
-    border: 1px white solid;
+    border: 1px whitesmoke solid;
     cursor: default;
-
-    &:hover {
-        background: rgba(182, 208, 255, 0.61);
-    }
 }
 
 .cell.friend {
@@ -47,12 +44,12 @@ div.grid {
     background: rgb(223, 71, 71);
 }
 
-.cell.foe.attacked {
-    background: rgb(128, 81, 81);
-}
-
 .cell.active {
     cursor: pointer;
+
+    &:hover {
+        background: rgba(182, 208, 255, 0.61);
+    }
 }
 
 .cell.attacked {

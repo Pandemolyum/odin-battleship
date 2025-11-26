@@ -1,4 +1,4 @@
-const { Gameboard } = require("./gameboard");
+import { Gameboard } from "./gameboard.js";
 const BOARD_SIZE = 10;
 
 class Player {
@@ -7,3 +7,5 @@ class Player {
         this.gameboard = new Gameboard(BOARD_SIZE);
     }
 }
+
+export { Player };

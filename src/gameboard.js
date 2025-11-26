@@ -33,10 +33,19 @@ class Gameboard {
         for (let i = 0; i < ship.length; i++) {
             if (hdirection) {
                 this.board[coords[0]][coords[1] + i] = ship;
+
+                this.subject.setState([
+                    "shipPlaced",
+                    [coords[0], coords[1] + i],
+                ]);
             } else {
                 this.board[coords[0] + i][coords[1]] = ship;
+
+                this.subject.setState([
+                    "shipPlaced",
+                    [coords[0] + i, coords[1]],
+                ]);
             }
-            this.subject.setState("shipPlaced");
         }
     }
 
@@ -50,7 +59,7 @@ class Gameboard {
         } else {
             this.board[coords[0]][coords[1]] = 0;
         }
-        this.subject.setState("attackReceived");
+        this.subject.setState(["attackReceived", coords]);
     }
 
     // Returns true if all ships on the board are sunk and false otherwise

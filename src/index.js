@@ -34,14 +34,21 @@ p2.board.placeShip([1, 7], true, P2smallShip);
 
 createEventListeners();
 
+// ========== FUNCTIONS ==========
 function p1obs(state) {
-    if (state === "shipPlaced") {
-        displayShips(p1, "left");
+    if (state[0] === "shipPlaced") {
+        displayShips(p1, "left", state[1]);
     }
+    // else if (state[0] === "attackReceived") {
+    //     displayShips(p1, "left");
+    // }
 }
 
 function p2obs(state) {
-    if (state === "shipPlaced") {
-        displayShips(p2, "right");
+    if (state[0] === "shipPlaced") {
+        displayShips(p2, "right", state[1]);
     }
+    // else if (state[0] === "attackReceived") {
+    //     displayShips(p2, "right");
+    // }
 }

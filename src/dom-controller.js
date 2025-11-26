@@ -21,20 +21,20 @@ function coordsToGridIndex(coords) {
 
 // Displays ships on the grid
 // side must be "left" or "right"
-function displayShips(player, side) {
+function displayShips(player, side, coords) {
     const grid = document.querySelector("div." + side + ">div.grid");
+    const index = coordsToGridIndex(coords);
 
-    for (let i = 0; i < player.board.board.length; i++) {
-        for (let j = 0; j < player.board.board.length; j++) {
-            const index = coordsToGridIndex([i, j]);
-
-            if (player.board.board[i][j] !== null && side === "left") {
-                grid.children[index].classList.add("friend");
-            } else if (player.board.board[i][j] !== null && side === "right") {
-                grid.children[index].classList.add("foe");
-            }
-        }
+    if (player.board.board[coords[0]][coords[1]] !== null && side === "left") {
+        grid.children[index].classList.add("friend");
+    } else if (
+        player.board.board[coords[0]][coords[1]] !== null &&
+        side === "right"
+    ) {
+        grid.children[index].classList.add("foe");
     }
 }
+
+// Updates grid square color
 
 export { createEventListeners, displayShips };

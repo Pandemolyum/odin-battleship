@@ -27,12 +27,35 @@ div.grid {
 .grid > * {
     background: rgb(182, 207, 255);
     border: 1px white solid;
+    cursor: default;
+
+    &:hover {
+        background: rgba(182, 208, 255, 0.61);
+    }
 }
 
 .cell.friend {
     background: rgb(108, 228, 52);
 }
 
+.cell.friend.attacked {
+    background: rgb(90, 114, 79);
+}
+
 .cell.foe {
+    cursor: default;
     background: rgb(223, 71, 71);
+}
+
+.cell.foe.attacked {
+    background: rgb(128, 81, 81);
+}
+
+.cell.active {
+    cursor: pointer;
+}
+
+.cell.attacked {
+    cursor: default;
+    background: rgb(138, 138, 138);
 }

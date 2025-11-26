@@ -53,7 +53,7 @@ class Gameboard {
     // square is updated to indicate that it has been attacked
     receiveAttack(coords) {
         const ship = this.board[coords[0]][coords[1]];
-        if (ship !== null) {
+        if (ship !== null && ship !== 1 && ship !== 0) {
             ship.hit();
             this.board[coords[0]][coords[1]] = 1;
         } else {

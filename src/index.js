@@ -1,9 +1,14 @@
 import { Player } from "./player.js";
-import { createEventListeners, displayShips } from "./dom-controller.js";
 import { Ship } from "./ship.js";
+import { Observer } from "./observer.js";
+import { createEventListeners, displayShips } from "./dom-controller.js";
 
 const p1 = new Player("human");
+const p1observer = new Observer("p1observer", p1obs);
+p1.board.subject.subscribe(p1observer);
 const p2 = new Player("computer");
+const p2observer = new Observer("p1observer", p2obs);
+p2.board.subject.subscribe(p2observer);
 
 const P1hugeShip = new Ship(5);
 const P1bigShip = new Ship(4);
@@ -27,7 +32,16 @@ p2.board.placeShip([8, 2], true, P2mediumShip);
 p2.board.placeShip([7, 6], false, P2mediumShip2);
 p2.board.placeShip([1, 7], true, P2smallShip);
 
-displayShips(p1, "left");
-displayShips(p2, "right");
-
 createEventListeners();
+
+function p1obs(state) {
+    if (state === "shipPlaced") {
+        displayShips(p1, "left");
+    }
+}
+
+function p2obs(state) {
+    if (state === "shipPlaced") {
+        displayShips(p2, "right");
+    }
+}

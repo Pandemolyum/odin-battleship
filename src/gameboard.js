@@ -1,8 +1,10 @@
 import { Ship } from "./ship.js";
+import { Subject } from "./observer.js";
 
 class Gameboard {
     constructor(size) {
         this.board = this.initializeBoard(size);
+        this.subject = new Subject();
     }
 
     // Creates a square empty board of specified size with all cell values set to null
@@ -34,6 +36,7 @@ class Gameboard {
             } else {
                 this.board[coords[0] + i][coords[1]] = ship;
             }
+            this.subject.setState("shipPlaced");
         }
     }
 
@@ -47,6 +50,7 @@ class Gameboard {
         } else {
             this.board[coords[0]][coords[1]] = 0;
         }
+        this.subject.setState("attackReceived");
     }
 
     // Returns true if all ships on the board are sunk and false otherwise

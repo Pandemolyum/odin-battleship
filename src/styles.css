@@ -25,6 +25,14 @@ div.grid {
 }
 
 .grid > * {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgb(182, 207, 255);
     border: 1px white solid;
+}
+
+.cell.friend {
+    background: rgb(108, 228, 52);
+}
+
+.cell.foe {
+    background: rgb(223, 71, 71);
 }

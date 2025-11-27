@@ -33,7 +33,6 @@ function coordsToGridIndex(coords) {
 }
 
 // Displays ships on the grid one by one
-// side must be "left" or "right"
 function displayPlacedShips(turn, coords) {
     const side = turn ? "right" : "left";
     const grid = document.querySelector("div." + side + ">div.grid");

@@ -44,6 +44,10 @@ div.grid {
     background: rgb(223, 71, 71);
 }
 
+.cell.foe.attacked {
+    background: rgb(134, 91, 91);
+}
+
 .cell.active {
     cursor: pointer;
 

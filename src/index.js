@@ -6,6 +6,7 @@ import {
     displayPlacedShips,
     displayShips,
     displayAttackedSquare,
+    displayGameOver,
 } from "./dom-controller.js";
 
 // Game state initialization
@@ -58,6 +59,7 @@ playerTurn.setState(false);
 // ========== FUNCTIONS ==========
 // Updates the board display dynamically based on the specified board state
 function onBoardChange(state) {
+    // Displays the board ships and squares based on the board state
     if (state[0] === "shipPlaced") {
         displayPlacedShips(playerTurn.state, state[1]);
     } else if (state[0] === "attackReceived") {
@@ -67,13 +69,24 @@ function onBoardChange(state) {
         if (!state[2]) {
             playerTurn.setState(!playerTurn.state);
         }
+
+        if (getOtherPlayer().board.areAllShipsSunk()) {
+            let message;
+            if (getCurrentPlayer() === p1) {
+                message = "Player 1 Wins!";
+            } else {
+                message = "Player 2 Wins!";
+            }
+
+            displayGameOver(message);
+
+            return;
+        }
     }
 
     // Execute computer player action if it is its turn
-    if (playerTurn.state && p2.type === "computer") {
-        p2.sendAttack(p1.board);
-    } else if (!playerTurn.state && p1.type === "computer") {
-        p1.sendAttack(p2.board);
+    if (getCurrentPlayer().type === "computer") {
+        getCurrentPlayer().sendAttack(getOtherPlayer().board);
     }
 }
 
@@ -83,5 +96,23 @@ function onTurnChange(state) {
         displayShips(p1, p2, state);
     } else {
         displayShips(p2, p1, state);
+    }
+}
+
+// Returns the player object whose turn it is to play
+function getCurrentPlayer() {
+    if (playerTurn.state) {
+        return p2;
+    } else if (!playerTurn.state) {
+        return p1;
+    }
+}
+
+// Returns the player object who is being attacked this turn
+function getOtherPlayer() {
+    if (playerTurn.state) {
+        return p1;
+    } else if (!playerTurn.state) {
+        return p2;
     }
 }

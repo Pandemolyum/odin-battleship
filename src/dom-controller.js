@@ -98,9 +98,19 @@ function displayAttackedSquare(turn, coords, hit) {
     grid.children[index].classList.remove("active");
 }
 
+// Displays a game over message
+function displayGameOver(message) {
+    const gameOver = document.createElement("h2");
+    gameOver.textContent = message;
+
+    const body = document.querySelector("body");
+    body.appendChild(gameOver);
+}
+
 export {
     createEventListeners,
     displayPlacedShips,
     displayShips,
     displayAttackedSquare,
+    displayGameOver,
 };

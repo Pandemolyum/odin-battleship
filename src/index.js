@@ -68,6 +68,13 @@ function onBoardChange(state) {
             playerTurn.setState(!playerTurn.state);
         }
     }
+
+    // Execute computer player action if it is its turn
+    if (playerTurn.state && p2.type === "computer") {
+        p2.sendAttack(p1.board);
+    } else if (!playerTurn.state && p1.type === "computer") {
+        p1.sendAttack(p2.board);
+    }
 }
 
 // Updates board display based on provided state

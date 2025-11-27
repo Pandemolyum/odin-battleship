@@ -6,6 +6,21 @@ class Player {
         this.type = type; // human or computer player
         this.board = new Gameboard(BOARD_SIZE);
     }
+
+    // The below methods should be used by computer players only
+    hitCoords = [];
+
+    // Sends a random attack to the enemy board
+    sendAttack(board) {
+        let x, y;
+        do {
+            x = Math.floor(Math.random() * 10);
+            y = Math.floor(Math.random() * 10);
+        } while (this.hitCoords.some((elem) => elem[0] === x && elem[1] === y));
+
+        this.hitCoords.push([x, y]);
+        board.receiveAttack([x, y]);
+    }
 }
 
 export { Player };

@@ -27,6 +27,12 @@ div.container {
     display: flex;
 }
 
+div.left,
+div.right {
+    display: flex;
+    flex-direction: column;
+}
+
 div.grid {
     display: grid;
     grid-template-columns: repeat(10, 3rem);
@@ -68,4 +74,40 @@ div.grid {
 .cell.attacked {
     cursor: default;
     background: rgb(138, 138, 138);
+}
+
+div.ships {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 30rem;
+    margin: 0rem 3rem;
+}
+
+div.ship-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 3rem);
+    grid-template-rows: 3rem;
+    cursor: grab;
+}
+
+.ship-grid > * {
+    background: rgb(108, 228, 52);
+    border: 1px whitesmoke solid;
+}
+
+div.ships * {
+    flex: 0 0 0%;
+}
+
+div.ship-grid.two {
+    grid-template-columns: repeat(2, 3rem);
+}
+
+div.ship-grid.three {
+    grid-template-columns: repeat(3, 3rem);
+}
+
+div.ship-grid.four {
+    grid-template-columns: repeat(4, 3rem);
 }

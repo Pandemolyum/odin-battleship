@@ -1,5 +1,5 @@
 // Creates event listeners
-function createClickEventListeners(p1, p2) {
+function createClickEventListeners(p1, p2, gameState) {
     document.addEventListener("click", (e) => {
         // Handles events when the grid cells are clicked
         if (e.target.classList.contains("cell")) {
@@ -19,8 +19,29 @@ function createClickEventListeners(p1, p2) {
             ) {
                 p1.board.receiveAttack(coords);
             }
+        } else if (
+            e.target.classList.contains("confirm-placement") &&
+            e.target.parentNode.classList.contains("left")
+        ) {
+            gameState.setState("position2");
+        } else if (
+            e.target.classList.contains("confirm-placement") &&
+            e.target.parentNode.classList.contains("right")
+        ) {
+            gameState.setState("combat");
         }
     });
+}
+
+function createShipNodeRemoveObserver(observedNode) {
+    const observer = new MutationObserver(() => {
+        if (observedNode.children.length === 0) {
+            const button = observedNode.parentNode.querySelector("button");
+            button.disabled = false;
+        }
+    });
+
+    observer.observe(observedNode, { childList: true });
 }
 
 // Returns the child index position of the specified element relative
@@ -45,11 +66,7 @@ function displayPlacedShips(turn, coords) {
     const grid = document.querySelector("div." + side + ">div.grid");
     const index = coordsToGridIndex(coords);
 
-    if (!turn) {
-        grid.children[index].classList.add("friend");
-    } else {
-        grid.children[index].classList.add("foe");
-    }
+    grid.children[index].classList.add("friend");
 }
 
 // Displays ships on the grid
@@ -132,15 +149,15 @@ function displayShipOnGrid(target, dragged, size) {
         testTarget = testTarget.nextElementSibling;
     }
 
-    // Display newly placed ship
+    // Record ship coordinates
     let coordsArr = [];
     for (let i = 0; i < size; i++) {
-        target.classList.add("friend"); // Changes grid color via CSS
-        target.classList.add("placed"); // Used to update board state with ship position
         coordsArr.push(gridIndexToCoords(getChildIndex(target)));
-        dragged.remove();
         target = target.nextElementSibling;
     }
+
+    dragged.remove();
+
     return coordsArr;
 }
 
@@ -156,6 +173,14 @@ function undisplayShipFromGrid(coordsArr, side) {
     }
 }
 
+function removeShipPlacementButtons() {
+    const buttons = document.querySelectorAll("button.confirm-placement");
+
+    for (let button of buttons) {
+        button.remove();
+    }
+}
+
 export {
     createClickEventListeners,
     displayPlacedShips,
@@ -163,4 +188,6 @@ export {
     displayAttackedSquare,
     displayGameOver,
     displayShipOnGrid,
+    createShipNodeRemoveObserver,
+    removeShipPlacementButtons,
 };

@@ -8,10 +8,12 @@ import {
     displayAttackedSquare,
     displayGameOver,
     displayShipOnGrid,
+    createShipNodeRemoveObserver,
+    removeShipPlacementButtons,
 } from "./dom-controller.js";
 
 // Game state initialization
-const gameState = new Subject("position"); // possible states: position1, position2, combat, ended
+const gameState = new Subject(); // possible states: position1, position2, combat, ended
 const stateObserver = new Observer("stateObserver", onStateChange);
 gameState.subscribe(stateObserver);
 
@@ -29,37 +31,18 @@ const p2 = new Player("computer");
 const p2observer = new Observer("p1observer", onBoardChange);
 p2.board.subject.subscribe(p2observer);
 
-// Player 1 ship initialization
-const P1hugeShip = new Ship(5);
-const P1bigShip = new Ship(4);
-const P1mediumShip = new Ship(3);
-const P1mediumShip2 = new Ship(3);
-const P1smallShip = new Ship(2);
-p1.board.placeShip([0, 0], true, P1hugeShip);
-p1.board.placeShip([1, 6], true, P1bigShip);
-p1.board.placeShip([3, 4], false, P1mediumShip);
-p1.board.placeShip([3, 0], true, P1mediumShip2);
-p1.board.placeShip([7, 6], false, P1smallShip);
-
-// Player 2 ship initialization
-playerTurn.state = true;
-const P2hugeShip = new Ship(5);
-const P2bigShip = new Ship(4);
-const P2mediumShip = new Ship(3);
-const P2mediumShip2 = new Ship(3);
-const P2smallShip = new Ship(2);
-p2.board.placeShip([0, 0], false, P2hugeShip);
-p2.board.placeShip([5, 4], true, P2bigShip);
-p2.board.placeShip([8, 2], true, P2mediumShip);
-p2.board.placeShip([7, 6], false, P2mediumShip2);
-p2.board.placeShip([1, 7], true, P2smallShip);
-
-// Event listener initialization
-createClickEventListeners(p1, p2);
+// Event listener and observers initialization
+createClickEventListeners(p1, p2, gameState);
 createDropEventListeners();
 
-// Combat phase start
-playerTurn.setState(false);
+const shipsLeft = document.querySelector("div.left div.ships");
+createShipNodeRemoveObserver(shipsLeft);
+
+const shipsRight = document.querySelector("div.right div.ships");
+createShipNodeRemoveObserver(shipsRight);
+
+// Game start
+gameState.setState("position1");
 
 // ========== FUNCTIONS ==========
 // Updates the board display dynamically based on the specified board state
@@ -90,7 +73,10 @@ function onBoardChange(state) {
     }
 
     // Execute computer player action if it is its turn
-    if (getCurrentPlayer().type === "computer") {
+    if (
+        gameState.state === "combat" &&
+        getCurrentPlayer().type === "computer"
+    ) {
         getCurrentPlayer().sendAttack(getOtherPlayer().board);
     }
 }
@@ -105,9 +91,18 @@ function onTurnChange(state) {
 }
 
 function onStateChange(state) {
-    if (state === "combat") {
-        // Update board with ship positions
-
+    const leftSide = document.querySelector("div.left");
+    const rightSide = document.querySelector("div.right");
+    if (state === "position1") {
+        playerTurn.setState(false);
+        rightSide.style.display = "none";
+    } else if (state === "position2") {
+        playerTurn.setState(true);
+        leftSide.style.display = "none";
+        rightSide.style.display = "flex";
+    } else if (state === "combat") {
+        removeShipPlacementButtons();
+        leftSide.style.display = "flex";
         playerTurn.setState(false); // Set current turn to player 1
     }
 }
@@ -136,7 +131,9 @@ function createDropEventListeners() {
     const draggables = document.querySelectorAll('[draggable="true"]');
     for (let draggable of draggables) {
         draggable.addEventListener("dragstart", (e) => {
-            dragged = e.target;
+            if (e.target.getAttribute("draggable")) {
+                dragged = e.target;
+            }
         });
     }
 
@@ -174,9 +171,9 @@ function createDropEventListeners() {
             // Display ship
             let target = e.target;
             const coordsArr = displayShipOnGrid(target, dragged, size);
-            console.log("🚀 ~ createDropEventListeners ~ size:", size);
 
             // Record ship on board object
+            if (!coordsArr) return;
             const ship = new Ship(size);
             let hdirection = false;
             if (coordsArr[0][0] === coordsArr[1][0]) {

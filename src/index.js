@@ -11,7 +11,10 @@ import {
 } from "./dom-controller.js";
 
 // Game state initialization
-let gameState = "combat"; // possible states: position, combat, ended
+const gameState = new Subject("position"); // possible states: position1, position2, combat, ended
+const stateObserver = new Observer("stateObserver", onStateChange);
+gameState.subscribe(stateObserver);
+
 const playerTurn = new Subject(false); // state false for player 1 turn and true for player 2 turn
 const turnObserver = new Observer("turnObserver", onTurnChange);
 playerTurn.subscribe(turnObserver);
@@ -101,6 +104,14 @@ function onTurnChange(state) {
     }
 }
 
+function onStateChange(state) {
+    if (state === "combat") {
+        // Update board with ship positions
+
+        playerTurn.setState(false); // Set current turn to player 1
+    }
+}
+
 // Returns the player object whose turn it is to play
 function getCurrentPlayer() {
     if (playerTurn.state) {
@@ -160,8 +171,23 @@ function createDropEventListeners() {
                 return;
             }
 
+            // Display ship
             let target = e.target;
-            displayShipOnGrid(target, dragged, size);
+            const coordsArr = displayShipOnGrid(target, dragged, size);
+            console.log("🚀 ~ createDropEventListeners ~ size:", size);
+
+            // Record ship on board object
+            const ship = new Ship(size);
+            let hdirection = false;
+            if (coordsArr[0][0] === coordsArr[1][0]) {
+                hdirection = true;
+            }
+
+            if (targetParentClass.contains("left")) {
+                p1.board.placeShip(coordsArr[0], hdirection, ship);
+            } else {
+                p2.board.placeShip(coordsArr[0], hdirection, ship);
+            }
         });
     }
 
@@ -198,7 +224,20 @@ function createDropEventListeners() {
 
             // Display ship
             let target = e.target;
-            displayShipOnGrid(target, dragged, size);
+            const coordsArr = displayShipOnGrid(target, dragged, size);
+
+            // Record ship on board object
+            const ship = new Ship(size);
+            let hdirection = false;
+            if (coordsArr && coordsArr[0][0] === coordsArr[1][0]) {
+                hdirection = true;
+            }
+
+            if (targetParentClass.contains("left")) {
+                p1.board.placeShip(coordsArr[0], hdirection, ship);
+            } else {
+                p2.board.placeShip(coordsArr[0], hdirection, ship);
+            }
         });
     }
 }

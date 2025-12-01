@@ -111,3 +111,7 @@ div.ship-grid.three {
 div.ship-grid.four {
     grid-template-columns: repeat(4, 3rem);
 }
+
+button {
+    margin: 3rem;
+}

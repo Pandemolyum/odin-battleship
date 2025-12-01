@@ -115,30 +115,45 @@ function displayGameOver(message) {
 }
 
 // Checks if the position of the ship is valid and if valid, displays it
-// Returns true if displayed and false otherwise
+// Returns the coordinates of the new ship if it is displayed
 function displayShipOnGrid(target, dragged, size) {
     // Check if position is within grid boundaries
     const coords = gridIndexToCoords(getChildIndex(target));
     if (coords[1] + size - 1 > 9) {
-        return false;
+        return;
     }
 
     // Check if position does not overlap another ship
     let testTarget = target;
     for (let i = 0; i < size; i++) {
         if (testTarget.classList.contains("friend")) {
-            return false;
+            return;
         }
         testTarget = testTarget.nextElementSibling;
     }
 
     // Display newly placed ship
+    let coordsArr = [];
     for (let i = 0; i < size; i++) {
-        target.classList.add("friend");
+        target.classList.add("friend"); // Changes grid color via CSS
+        target.classList.add("placed"); // Used to update board state with ship position
+        coordsArr.push(gridIndexToCoords(getChildIndex(target)));
         dragged.remove();
         target = target.nextElementSibling;
     }
-    return true;
+    return coordsArr;
+}
+
+// Removes a ship from the grid display
+// side must be "left" or "right", indicating which board to change
+function undisplayShipFromGrid(coordsArr, side) {
+    for (coords of coordsArr) {
+        const index = coordsToGridIndex(coords);
+        const parent = document.querySelector("div." + side + ".grid");
+        const cell = parent.children[index];
+        cell.classList.remove("friend"); // Changes grid color via CSS
+        cell.classList.remove("placed"); // Used to update board state with ship position
+    }
 }
 
 export {

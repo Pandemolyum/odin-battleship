@@ -20,13 +20,19 @@ class Gameboard {
     // false if it is placed vertically
     placeShip(coords, hdirection, ship) {
         // Return if a ship already exists in the position of the placed ship
+        // or if it is outside of the grid boundaries
         for (let i = 0; i < ship.length; i++) {
+            if (
+                (hdirection && coords[1] + i > 9) ||
+                (!hdirection && coords[0] + i > 9)
+            )
+                return;
+
             if (
                 (hdirection && this.board[coords[0]][coords[1] + i] !== null) ||
                 (!hdirection && this.board[coords[0] + i][coords[1]] !== null)
-            ) {
+            )
                 return;
-            }
         }
 
         // Assign ship to gameboard coordinates
@@ -47,6 +53,8 @@ class Gameboard {
                 ]);
             }
         }
+
+        return true;
     }
 
     // Returns the ship coordinates
@@ -77,10 +85,19 @@ class Gameboard {
 
         this.subject.setState(["shipRotated", lastCoords]);
 
+        let placed;
         if (lastCoords[0][0] === lastCoords[1][0]) {
-            this.placeShip(lastCoords[0], false, ship);
+            placed = this.placeShip(lastCoords[0], false, ship);
         } else {
-            this.placeShip(lastCoords[0], true, ship);
+            placed = this.placeShip(lastCoords[0], true, ship);
+        }
+
+        if (!placed) {
+            if (lastCoords[0][0] === lastCoords[1][0]) {
+                this.placeShip(lastCoords[0], true, ship);
+            } else {
+                this.placeShip(lastCoords[0], false, ship);
+            }
         }
     }
 

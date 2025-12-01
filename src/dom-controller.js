@@ -7,15 +7,12 @@ function createClickEventListeners(p1, p2, gameState) {
             const i = getChildIndex(e.target);
             const coords = gridIndexToCoords(i);
 
-            // Determine board where ship is located
+            // Determine board where ship is located and rotate ship
             if (parent.parentNode.classList.contains("left")) {
                 p1.board.rotateShip(coords);
             } else {
                 p2.board.rotateShip(coords);
             }
-            // remove ship from board
-            // add rotated ship to board
-            // update display
         } else if (e.target.classList.contains("cell")) {
             const parent = e.target.parentNode;
             const i = getChildIndex(e.target);

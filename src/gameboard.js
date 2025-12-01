@@ -19,7 +19,7 @@ class Gameboard {
     // direction. hdirection is true when the ship is placed horizontally and
     // false if it is placed vertically
     placeShip(coords, hdirection, ship) {
-        // Return if a ship already exists in the position of the placed ship
+        // Return if a dfferent ship already exists in the position of the placed ship
         // or if it is outside of the grid boundaries
         for (let i = 0; i < ship.length; i++) {
             if (
@@ -43,6 +43,7 @@ class Gameboard {
                 this.subject.setState([
                     "shipPlaced",
                     [coords[0], coords[1] + i],
+                    ship.length,
                 ]);
             } else {
                 this.board[coords[0] + i][coords[1]] = ship;
@@ -50,6 +51,7 @@ class Gameboard {
                 this.subject.setState([
                     "shipPlaced",
                     [coords[0] + i, coords[1]],
+                    ship.length,
                 ]);
             }
         }
@@ -74,6 +76,7 @@ class Gameboard {
         coordsArr.forEach((e) => {
             this.board[e[0]][e[1]] = null;
         });
+        this.subject.setState(["shipRemoved", coordsArr]);
     }
 
     // Rotates the object at the position indicated by coords
@@ -83,8 +86,7 @@ class Gameboard {
         const lastCoords = this.getShipCoords(ship);
         this.clearCells(lastCoords);
 
-        this.subject.setState(["shipRotated", lastCoords]);
-
+        // Attempt to rotate ship
         let placed;
         if (lastCoords[0][0] === lastCoords[1][0]) {
             placed = this.placeShip(lastCoords[0], false, ship);
@@ -92,11 +94,37 @@ class Gameboard {
             placed = this.placeShip(lastCoords[0], true, ship);
         }
 
+        // If the ship is not rotated, maintain previous position
         if (!placed) {
             if (lastCoords[0][0] === lastCoords[1][0]) {
                 this.placeShip(lastCoords[0], true, ship);
             } else {
                 this.placeShip(lastCoords[0], false, ship);
+            }
+        }
+    }
+
+    // Moves the object at the position indicated by coords
+    moveShip(targetCoords, newCoords) {
+        const ship = this.board[targetCoords[0]][targetCoords[1]];
+
+        const lastCoords = this.getShipCoords(ship);
+        this.clearCells(lastCoords);
+
+        // Attempt to move the ship
+        let placed;
+        if (lastCoords[0][0] === lastCoords[1][0]) {
+            placed = this.placeShip(newCoords, true, ship);
+        } else {
+            placed = this.placeShip(newCoords, false, ship);
+        }
+
+        // If the ship is not moved, maintain previous position
+        if (!placed) {
+            if (lastCoords[0][0] === lastCoords[1][0]) {
+                this.placeShip(targetCoords, true, ship);
+            } else {
+                this.placeShip(targetCoords, false, ship);
             }
         }
     }

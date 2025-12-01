@@ -11,6 +11,8 @@ import {
     createShipNodeRemoveObserver,
     removeShipPlacementButtons,
     undisplayShip,
+    getChildIndex,
+    gridIndexToCoords,
 } from "./dom-controller.js";
 
 // Game state initialization
@@ -50,8 +52,8 @@ gameState.setState("position1");
 function onBoardChange(state) {
     // Displays the board ships and squares based on the board state
     if (state[0] === "shipPlaced") {
-        displayPlacedShips(playerTurn.state, state[1]);
-    } else if (state[0] === "shipRotated") {
+        displayPlacedShips(playerTurn.state, state[1], state[2]);
+    } else if (state[0] === "shipRemoved") {
         undisplayShip(playerTurn.state, state[1]);
     } else if (state[0] === "attackReceived") {
         displayAttackedSquare(playerTurn.state, state[1], state[2]);
@@ -142,10 +144,19 @@ function createDropEventListeners() {
 
     const leftCells = document.querySelectorAll(".left .grid .cell");
     for (let cell of leftCells) {
+        // Defines that item that is being dragged
+        cell.addEventListener("dragstart", (e) => {
+            if (e.target.getAttribute("draggable")) {
+                dragged = e.target;
+            }
+        });
+
         cell.addEventListener("dragover", (e) => {
             e.preventDefault();
         });
 
+        // Defines what happens when an item is dragged and dropped
+        // This places or moves a ship on the grid
         cell.addEventListener("drop", (e) => {
             const clsList = dragged.classList;
             let size;
@@ -175,18 +186,31 @@ function createDropEventListeners() {
             let target = e.target;
             const coordsArr = displayShipOnGrid(target, dragged, size);
 
-            // Record ship on board object
-            if (!coordsArr) return;
-            const ship = new Ship(size);
-            let hdirection = false;
-            if (coordsArr[0][0] === coordsArr[1][0]) {
-                hdirection = true;
-            }
+            if (!coordsArr) return; // Check if array exists
 
-            if (targetParentClass.contains("left")) {
-                p1.board.placeShip(coordsArr[0], hdirection, ship);
+            // Update board object with the new position of the ship
+            if (clsList.contains("cell")) {
+                // If the object is moved from the grid...
+                if (targetParentClass.contains("left")) {
+                    const index = getChildIndex(dragged);
+                    p1.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
+                } else {
+                    const index = getChildIndex(dragged);
+                    p2.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
+                }
             } else {
-                p2.board.placeShip(coordsArr[0], hdirection, ship);
+                // If the object is new on the grid...
+                const ship = new Ship(size);
+                let hdirection = false;
+                if (coordsArr[0][0] === coordsArr[1][0]) {
+                    hdirection = true;
+                }
+
+                if (targetParentClass.contains("left")) {
+                    p1.board.placeShip(coordsArr[0], hdirection, ship);
+                } else {
+                    p2.board.placeShip(coordsArr[0], hdirection, ship);
+                }
             }
         });
     }

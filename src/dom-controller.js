@@ -72,13 +72,22 @@ function coordsToGridIndex(coords) {
 }
 
 // Displays ships on the grid one by one
-function displayPlacedShips(turn, coords) {
+function displayPlacedShips(turn, coords, length) {
     const side = turn ? "right" : "left";
     const grid = document.querySelector("div." + side + ">div.grid");
     const index = coordsToGridIndex(coords);
 
     grid.children[index].classList.add("friend");
     grid.children[index].classList.add("active");
+    grid.children[index].setAttribute("draggable", "true");
+
+    if (length === 2) {
+        grid.children[index].classList.add("two");
+    } else if (length === 3) {
+        grid.children[index].classList.add("three");
+    } else if (length === 4) {
+        grid.children[index].classList.add("four");
+    }
 }
 
 // Displays ships on the grid
@@ -148,16 +157,17 @@ function displayGameOver(message) {
 function displayShipOnGrid(target, dragged, size) {
     // Check if position is within grid boundaries
     const coords = gridIndexToCoords(getChildIndex(target));
-    if (coords[1] + size - 1 > 9) {
-        return;
-    }
+    if (coords[1] + size - 1 > 9) return;
 
     // Check if position does not overlap another ship
     let testTarget = target;
+
+    // THERE IS A BUG HERE!
+    // To fix: need to check if friend tag is self AND need to check vertical direction as well
+    // Possible best solution: remove the check below and go back to index.js line 187 where this is called
+    // then return true or false from move and place functions and update display accordingly
     for (let i = 0; i < size; i++) {
-        if (testTarget.classList.contains("friend")) {
-            return;
-        }
+        if (testTarget.classList.contains("friend")) return;
         testTarget = testTarget.nextElementSibling;
     }
 
@@ -168,7 +178,7 @@ function displayShipOnGrid(target, dragged, size) {
         target = target.nextElementSibling;
     }
 
-    dragged.remove();
+    if (!dragged.classList.contains("cell")) dragged.remove();
 
     return coordsArr;
 }
@@ -183,6 +193,10 @@ function undisplayShip(turn, coordsArr) {
         const cell = grid.children[index];
         cell.classList.remove("friend"); // Changes grid color via CSS
         cell.classList.remove("active"); // Updates cursor style via CSS
+        cell.classList.remove("four");
+        cell.classList.remove("three");
+        cell.classList.remove("two");
+        cell.setAttribute("draggable", "false");
     }
 }
 
@@ -204,4 +218,6 @@ export {
     createShipNodeRemoveObserver,
     removeShipPlacementButtons,
     undisplayShip,
+    getChildIndex,
+    gridIndexToCoords,
 };

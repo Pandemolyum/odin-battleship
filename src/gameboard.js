@@ -49,6 +49,41 @@ class Gameboard {
         }
     }
 
+    // Returns the ship coordinates
+    getShipCoords(ship) {
+        let coordsArr = [];
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board.length; j++) {
+                if (this.board[i][j] === ship) {
+                    coordsArr.push([i, j]);
+                }
+            }
+        }
+        return coordsArr;
+    }
+
+    clearCells(coordsArr) {
+        coordsArr.forEach((e) => {
+            this.board[e[0]][e[1]] = null;
+        });
+    }
+
+    // Rotates the object at the position indicated by coords
+    rotateShip(coords) {
+        const ship = this.board[coords[0]][coords[1]];
+
+        const lastCoords = this.getShipCoords(ship);
+        this.clearCells(lastCoords);
+
+        this.subject.setState(["shipRotated", lastCoords]);
+
+        if (lastCoords[0][0] === lastCoords[1][0]) {
+            this.placeShip(lastCoords[0], false, ship);
+        } else {
+            this.placeShip(lastCoords[0], true, ship);
+        }
+    }
+
     // If there is a ship at the specified coordinates, the ship is damaged and the
     // square is updated to indicate that it has been attacked
     receiveAttack(coords) {

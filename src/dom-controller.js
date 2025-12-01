@@ -2,7 +2,21 @@
 function createClickEventListeners(p1, p2, gameState) {
     document.addEventListener("click", (e) => {
         // Handles events when the grid cells are clicked
-        if (e.target.classList.contains("cell")) {
+        if (e.target.classList.contains("friend")) {
+            const parent = e.target.parentNode;
+            const i = getChildIndex(e.target);
+            const coords = gridIndexToCoords(i);
+
+            // Determine board where ship is located
+            if (parent.parentNode.classList.contains("left")) {
+                p1.board.rotateShip(coords);
+            } else {
+                p2.board.rotateShip(coords);
+            }
+            // remove ship from board
+            // add rotated ship to board
+            // update display
+        } else if (e.target.classList.contains("cell")) {
             const parent = e.target.parentNode;
             const i = getChildIndex(e.target);
             const coords = gridIndexToCoords(i);
@@ -67,6 +81,7 @@ function displayPlacedShips(turn, coords) {
     const index = coordsToGridIndex(coords);
 
     grid.children[index].classList.add("friend");
+    grid.children[index].classList.add("active");
 }
 
 // Displays ships on the grid
@@ -163,13 +178,14 @@ function displayShipOnGrid(target, dragged, size) {
 
 // Removes a ship from the grid display
 // side must be "left" or "right", indicating which board to change
-function undisplayShipFromGrid(coordsArr, side) {
-    for (coords of coordsArr) {
+function undisplayShip(turn, coordsArr) {
+    const side = turn ? "right" : "left";
+    const grid = document.querySelector("div." + side + ">div.grid");
+    for (let coords of coordsArr) {
         const index = coordsToGridIndex(coords);
-        const parent = document.querySelector("div." + side + ".grid");
-        const cell = parent.children[index];
+        const cell = grid.children[index];
         cell.classList.remove("friend"); // Changes grid color via CSS
-        cell.classList.remove("placed"); // Used to update board state with ship position
+        cell.classList.remove("active"); // Updates cursor style via CSS
     }
 }
 
@@ -190,4 +206,5 @@ export {
     displayShipOnGrid,
     createShipNodeRemoveObserver,
     removeShipPlacementButtons,
+    undisplayShip,
 };

@@ -10,6 +10,7 @@ import {
     displayShipOnGrid,
     createShipNodeRemoveObserver,
     removeShipPlacementButtons,
+    undisplayShip,
 } from "./dom-controller.js";
 
 // Game state initialization
@@ -50,6 +51,8 @@ function onBoardChange(state) {
     // Displays the board ships and squares based on the board state
     if (state[0] === "shipPlaced") {
         displayPlacedShips(playerTurn.state, state[1]);
+    } else if (state[0] === "shipRotated") {
+        undisplayShip(playerTurn.state, state[1]);
     } else if (state[0] === "attackReceived") {
         displayAttackedSquare(playerTurn.state, state[1], state[2]);
 

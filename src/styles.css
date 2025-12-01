@@ -71,6 +71,11 @@ div.grid {
     }
 }
 
+.cell.friend.active {
+    cursor: pointer;
+    background: rgb(108, 228, 52);
+}
+
 .cell.attacked {
     cursor: default;
     background: rgb(138, 138, 138);

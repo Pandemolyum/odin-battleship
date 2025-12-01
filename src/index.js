@@ -2,11 +2,12 @@ import { Player } from "./player.js";
 import { Ship } from "./ship.js";
 import { Subject, Observer } from "./observer.js";
 import {
-    createEventListeners,
+    createClickEventListeners,
     displayPlacedShips,
     displayShips,
     displayAttackedSquare,
     displayGameOver,
+    displayShipOnGrid,
 } from "./dom-controller.js";
 
 // Game state initialization
@@ -51,7 +52,8 @@ p2.board.placeShip([7, 6], false, P2mediumShip2);
 p2.board.placeShip([1, 7], true, P2smallShip);
 
 // Event listener initialization
-createEventListeners(p1, p2);
+createClickEventListeners(p1, p2);
+createDropEventListeners();
 
 // Combat phase start
 playerTurn.setState(false);
@@ -114,5 +116,55 @@ function getOtherPlayer() {
         return p1;
     } else if (!playerTurn.state) {
         return p2;
+    }
+}
+
+function createDropEventListeners() {
+    // Defines the element that is currently being dragged
+    let dragged = null;
+    const draggables = document.querySelectorAll('[draggable="true"]');
+    for (let draggable of draggables) {
+        draggable.addEventListener("dragstart", (e) => {
+            dragged = e.target;
+        });
+    }
+
+    const leftCells = document.querySelectorAll(".left .grid .cell");
+    for (let cell of leftCells) {
+        cell.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        cell.addEventListener("drop", (e) => {
+            const clsList = dragged.classList;
+            let size;
+            if (clsList.contains("two")) {
+                size = 2;
+            } else if (clsList.contains("three")) {
+                size = 3;
+            } else if (clsList.contains("four")) {
+                size = 4;
+            } else {
+                size = 5;
+            }
+
+            let target = e.target;
+            displayShipOnGrid(target, dragged, size);
+        });
+    }
+
+    const rightCells = document.querySelectorAll(".right .grid .cell");
+    for (let cell of rightCells) {
+        cell.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        cell.addEventListener("drop", (e) => {
+            const clsList = dragged.classList;
+            if (clsList.contains("two")) {
+                cell.replaceWith(dragged);
+                e.target.classList.add("placed");
+            }
+        });
     }
 }

@@ -1,11 +1,10 @@
 // Creates event listeners
-function createEventListeners(p1, p2) {
+function createClickEventListeners(p1, p2) {
     document.addEventListener("click", (e) => {
         // Handles events when the grid cells are clicked
         if (e.target.classList.contains("cell")) {
             const parent = e.target.parentNode;
-            const children = parent.children;
-            const i = Array.prototype.indexOf.call(children, e.target);
+            const i = getChildIndex(e.target);
             const coords = gridIndexToCoords(i);
 
             // Send attack to grid square
@@ -22,6 +21,14 @@ function createEventListeners(p1, p2) {
             }
         }
     });
+}
+
+// Returns the child index position of the specified element relative
+// to its parent
+function getChildIndex(child) {
+    const parent = child.parentNode;
+    const children = parent.children;
+    return Array.prototype.indexOf.call(children, child);
 }
 
 function gridIndexToCoords(gridIndex) {
@@ -107,10 +114,36 @@ function displayGameOver(message) {
     body.appendChild(gameOver);
 }
 
+// Checks if the position of the ship is valid and if valid, displays it
+function displayShipOnGrid(target, dragged, size) {
+    // Check if position is within grid boundaries
+    const coords = gridIndexToCoords(getChildIndex(target));
+    if (coords[1] + size - 1 > 9) {
+        return;
+    }
+
+    // Check if position does not overlap another ship
+    let testTarget = target;
+    for (let i = 0; i < size; i++) {
+        if (testTarget.classList.contains("friend")) {
+            return;
+        }
+        testTarget = testTarget.nextElementSibling;
+    }
+
+    // Display newly placed ship
+    for (let i = 0; i < size; i++) {
+        target.classList.add("friend");
+        dragged.remove();
+        target = target.nextElementSibling;
+    }
+}
+
 export {
-    createEventListeners,
+    createClickEventListeners,
     displayPlacedShips,
     displayShips,
     displayAttackedSquare,
     displayGameOver,
+    displayShipOnGrid,
 };

@@ -148,6 +148,18 @@ function createDropEventListeners() {
                 size = 5;
             }
 
+            // Check that the ship is being placed on the correct board
+            const targetParentClass = cell.parentNode.parentNode.classList;
+            const draggedParentClass = dragged.parentNode.parentNode.classList;
+            if (
+                (targetParentClass.contains("left") &&
+                    !draggedParentClass.contains("left")) ||
+                (targetParentClass.contains("right") &&
+                    !draggedParentClass.contains("right"))
+            ) {
+                return;
+            }
+
             let target = e.target;
             displayShipOnGrid(target, dragged, size);
         });
@@ -161,10 +173,32 @@ function createDropEventListeners() {
 
         cell.addEventListener("drop", (e) => {
             const clsList = dragged.classList;
+            let size;
             if (clsList.contains("two")) {
-                cell.replaceWith(dragged);
-                e.target.classList.add("placed");
+                size = 2;
+            } else if (clsList.contains("three")) {
+                size = 3;
+            } else if (clsList.contains("four")) {
+                size = 4;
+            } else {
+                size = 5;
             }
+
+            // Check that the ship is being placed on the correct board
+            const targetParentClass = cell.parentNode.parentNode.classList;
+            const draggedParentClass = dragged.parentNode.parentNode.classList;
+            if (
+                (targetParentClass.contains("left") &&
+                    !draggedParentClass.contains("left")) ||
+                (targetParentClass.contains("right") &&
+                    !draggedParentClass.contains("right"))
+            ) {
+                return;
+            }
+
+            // Display ship
+            let target = e.target;
+            displayShipOnGrid(target, dragged, size);
         });
     }
 }

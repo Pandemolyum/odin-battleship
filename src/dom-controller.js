@@ -115,18 +115,19 @@ function displayGameOver(message) {
 }
 
 // Checks if the position of the ship is valid and if valid, displays it
+// Returns true if displayed and false otherwise
 function displayShipOnGrid(target, dragged, size) {
     // Check if position is within grid boundaries
     const coords = gridIndexToCoords(getChildIndex(target));
     if (coords[1] + size - 1 > 9) {
-        return;
+        return false;
     }
 
     // Check if position does not overlap another ship
     let testTarget = target;
     for (let i = 0; i < size; i++) {
         if (testTarget.classList.contains("friend")) {
-            return;
+            return false;
         }
         testTarget = testTarget.nextElementSibling;
     }
@@ -137,6 +138,7 @@ function displayShipOnGrid(target, dragged, size) {
         dragged.remove();
         target = target.nextElementSibling;
     }
+    return true;
 }
 
 export {

@@ -155,7 +155,6 @@ function displayGameOver(message) {
 // Checks if the position of the ship is valid and if valid, removes it and
 // returns the coordinates of the new ship if it is displayed
 function displayShipOnGrid(target, dragged, size, board) {
-    console.log("🚀 ~ displayShipOnGrid ~ board:", board);
     // Find previous ship position
     let ship;
     if (dragged.classList.contains("ship-grid")) {
@@ -192,14 +191,6 @@ function displayShipOnGrid(target, dragged, size, board) {
             board.board[coord[0]][coord[1]] !== null &&
             board.board[coord[0]][coord[1]] !== ship
         ) {
-            console.log(
-                "🚀 ~ displayShipOnGrid ~ board.board[coord[0]][coord[1]] !== null:",
-                board.board[coord[0]][coord[1]] !== null
-            );
-            console.log(
-                "🚀 ~ displayShipOnGrid ~ board.board[coord[0]][coord[1]] !== ship:",
-                board.board[coord[0]][coord[1]] !== ship
-            );
             return;
         }
     }

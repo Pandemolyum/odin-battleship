@@ -158,115 +158,89 @@ function createDropEventListeners() {
         // Defines what happens when an item is dragged and dropped
         // This places or moves a ship on the grid
         cell.addEventListener("drop", (e) => {
-            const clsList = dragged.classList;
-            let size;
-            if (clsList.contains("two")) {
-                size = 2;
-            } else if (clsList.contains("three")) {
-                size = 3;
-            } else if (clsList.contains("four")) {
-                size = 4;
-            } else {
-                size = 5;
-            }
-
-            // Check that the ship is being placed on the correct board
-            const targetParentClass = cell.parentNode.parentNode.classList;
-            const draggedParentClass = dragged.parentNode.parentNode.classList;
-            if (
-                (targetParentClass.contains("left") &&
-                    !draggedParentClass.contains("left")) ||
-                (targetParentClass.contains("right") &&
-                    !draggedParentClass.contains("right"))
-            ) {
-                return;
-            }
-
-            // Display ship
-            let target = e.target;
-            let coordsArr;
-            if (targetParentClass.contains("left")) {
-                coordsArr = displayShipOnGrid(target, dragged, size, p1.board);
-            } else {
-                coordsArr = displayShipOnGrid(target, dragged, size, p2.board);
-            }
-
-            if (!coordsArr) return; // Check if array exists
-
-            // Update board object with the new position of the ship
-            if (clsList.contains("cell")) {
-                // If the object is moved from the grid...
-                if (targetParentClass.contains("left")) {
-                    const index = getChildIndex(dragged);
-                    p1.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
-                } else {
-                    const index = getChildIndex(dragged);
-                    p2.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
-                }
-            } else {
-                // If the object is new on the grid...
-                const ship = new Ship(size);
-                let hdirection = false;
-                if (coordsArr[0][0] === coordsArr[1][0]) {
-                    hdirection = true;
-                }
-
-                if (targetParentClass.contains("left")) {
-                    p1.board.placeShip(coordsArr[0], hdirection, ship);
-                } else {
-                    p2.board.placeShip(coordsArr[0], hdirection, ship);
-                }
-            }
+            onDroppedElement(dragged, cell, e);
         });
     }
 
     const rightCells = document.querySelectorAll(".right .grid .cell");
     for (let cell of rightCells) {
+        // Defines that item that is being dragged
+        cell.addEventListener("dragstart", (e) => {
+            if (e.target.getAttribute("draggable")) {
+                dragged = e.target;
+            }
+        });
+
         cell.addEventListener("dragover", (e) => {
             e.preventDefault();
         });
 
+        // Defines what happens when an item is dragged and dropped
+        // This places or moves a ship on the grid
         cell.addEventListener("drop", (e) => {
-            const clsList = dragged.classList;
-            let size;
-            if (clsList.contains("two")) {
-                size = 2;
-            } else if (clsList.contains("three")) {
-                size = 3;
-            } else if (clsList.contains("four")) {
-                size = 4;
-            } else {
-                size = 5;
-            }
-
-            // Check that the ship is being placed on the correct board
-            const targetParentClass = cell.parentNode.parentNode.classList;
-            const draggedParentClass = dragged.parentNode.parentNode.classList;
-            if (
-                (targetParentClass.contains("left") &&
-                    !draggedParentClass.contains("left")) ||
-                (targetParentClass.contains("right") &&
-                    !draggedParentClass.contains("right"))
-            ) {
-                return;
-            }
-
-            // Display ship
-            let target = e.target;
-            const coordsArr = displayShipOnGrid(target, dragged, size);
-
-            // Record ship on board object
-            const ship = new Ship(size);
-            let hdirection = false;
-            if (coordsArr && coordsArr[0][0] === coordsArr[1][0]) {
-                hdirection = true;
-            }
-
-            if (targetParentClass.contains("left")) {
-                p1.board.placeShip(coordsArr[0], hdirection, ship);
-            } else {
-                p2.board.placeShip(coordsArr[0], hdirection, ship);
-            }
+            onDroppedElement(dragged, cell, e);
         });
+    }
+}
+
+function onDroppedElement(dragged, cell, e) {
+    const clsList = dragged.classList;
+    let size;
+    if (clsList.contains("two")) {
+        size = 2;
+    } else if (clsList.contains("three")) {
+        size = 3;
+    } else if (clsList.contains("four")) {
+        size = 4;
+    } else {
+        size = 5;
+    }
+
+    // Check that the ship is being placed on the correct board
+    const targetParentClass = cell.parentNode.parentNode.classList;
+    const draggedParentClass = dragged.parentNode.parentNode.classList;
+    if (
+        (targetParentClass.contains("left") &&
+            !draggedParentClass.contains("left")) ||
+        (targetParentClass.contains("right") &&
+            !draggedParentClass.contains("right"))
+    ) {
+        return;
+    }
+
+    // Display ship
+    let target = e.target;
+    let coordsArr;
+    if (targetParentClass.contains("left")) {
+        coordsArr = displayShipOnGrid(target, dragged, size, p1.board);
+    } else {
+        coordsArr = displayShipOnGrid(target, dragged, size, p2.board);
+    }
+
+    if (!coordsArr) return; // Check if array exists
+
+    // Update board object with the new position of the ship
+    if (clsList.contains("cell")) {
+        // If the object is moved from the grid...
+        if (targetParentClass.contains("left")) {
+            const index = getChildIndex(dragged);
+            p1.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
+        } else {
+            const index = getChildIndex(dragged);
+            p2.board.moveShip(gridIndexToCoords(index), coordsArr[0]);
+        }
+    } else {
+        // If the object is new on the grid...
+        const ship = new Ship(size);
+        let hdirection = false;
+        if (coordsArr[0][0] === coordsArr[1][0]) {
+            hdirection = true;
+        }
+
+        if (targetParentClass.contains("left")) {
+            p1.board.placeShip(coordsArr[0], hdirection, ship);
+        } else {
+            p2.board.placeShip(coordsArr[0], hdirection, ship);
+        }
     }
 }

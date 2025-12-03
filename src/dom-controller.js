@@ -152,32 +152,59 @@ function displayGameOver(message) {
     body.appendChild(gameOver);
 }
 
-// Checks if the position of the ship is valid and if valid, displays it
-// Returns the coordinates of the new ship if it is displayed
-function displayShipOnGrid(target, dragged, size) {
-    // Check if position is within grid boundaries
-    const coords = gridIndexToCoords(getChildIndex(target));
-    if (coords[1] + size - 1 > 9) return;
-
-    // Check if position does not overlap another ship
-    let testTarget = target;
-
-    // THERE IS A BUG HERE!
-    // To fix: need to check if friend tag is self AND need to check vertical direction as well
-    // Possible best solution: remove the check below and go back to index.js line 187 where this is called
-    // then return true or false from move and place functions and update display accordingly
-    for (let i = 0; i < size; i++) {
-        if (testTarget.classList.contains("friend")) return;
-        testTarget = testTarget.nextElementSibling;
+// Checks if the position of the ship is valid and if valid, removes it and
+// returns the coordinates of the new ship if it is displayed
+function displayShipOnGrid(target, dragged, size, board) {
+    console.log("🚀 ~ displayShipOnGrid ~ board:", board);
+    // Find previous ship position
+    let ship;
+    if (dragged.classList.contains("ship-grid")) {
+        ship = null;
+    } else {
+        const draggedCoords = gridIndexToCoords(getChildIndex(dragged));
+        ship = board.board[draggedCoords[0]][draggedCoords[1]];
     }
 
-    // Record ship coordinates
+    // Record new ship coordinates in coordsArr
+    let shipCoords;
     let coordsArr = [];
-    for (let i = 0; i < size; i++) {
-        coordsArr.push(gridIndexToCoords(getChildIndex(target)));
-        target = target.nextElementSibling;
+    const targetCoords = gridIndexToCoords(getChildIndex(target));
+    if (ship !== null) {
+        shipCoords = board.getShipCoords(ship);
+
+        const offset = [
+            targetCoords[0] - shipCoords[0][0],
+            targetCoords[1] - shipCoords[0][1],
+        ];
+
+        coordsArr = shipCoords.map((x) => [x[0] + offset[0], x[1] + offset[1]]);
+    } else {
+        for (let i = 0; i < size; i++) {
+            coordsArr.push(gridIndexToCoords(getChildIndex(target)));
+            target = target.nextElementSibling;
+        }
     }
 
+    // Check if position does not overlap another ship unless other ship is self
+    // Return if there is an overlap
+    for (let coord of coordsArr) {
+        if (
+            board.board[coord[0]][coord[1]] !== null &&
+            board.board[coord[0]][coord[1]] !== ship
+        ) {
+            console.log(
+                "🚀 ~ displayShipOnGrid ~ board.board[coord[0]][coord[1]] !== null:",
+                board.board[coord[0]][coord[1]] !== null
+            );
+            console.log(
+                "🚀 ~ displayShipOnGrid ~ board.board[coord[0]][coord[1]] !== ship:",
+                board.board[coord[0]][coord[1]] !== ship
+            );
+            return;
+        }
+    }
+
+    // Remove previous object from the DOM
     if (!dragged.classList.contains("cell")) dragged.remove();
 
     return coordsArr;

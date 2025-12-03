@@ -26,13 +26,13 @@ class Gameboard {
                 (hdirection && coords[1] + i > 9) ||
                 (!hdirection && coords[0] + i > 9)
             )
-                return;
+                return false;
 
             if (
                 (hdirection && this.board[coords[0]][coords[1] + i] !== null) ||
                 (!hdirection && this.board[coords[0] + i][coords[1]] !== null)
             )
-                return;
+                return false;
         }
 
         // Assign ship to gameboard coordinates
@@ -127,6 +127,8 @@ class Gameboard {
                 this.placeShip(targetCoords, false, ship);
             }
         }
+
+        return placed;
     }
 
     // If there is a ship at the specified coordinates, the ship is damaged and the

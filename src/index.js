@@ -184,7 +184,12 @@ function createDropEventListeners() {
 
             // Display ship
             let target = e.target;
-            const coordsArr = displayShipOnGrid(target, dragged, size);
+            let coordsArr;
+            if (targetParentClass.contains("left")) {
+                coordsArr = displayShipOnGrid(target, dragged, size, p1.board);
+            } else {
+                coordsArr = displayShipOnGrid(target, dragged, size, p2.board);
+            }
 
             if (!coordsArr) return; // Check if array exists
 

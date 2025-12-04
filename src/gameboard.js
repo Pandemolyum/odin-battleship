@@ -139,9 +139,11 @@ class Gameboard {
             ship.hit();
             this.board[coords[0]][coords[1]] = 1;
             this.subject.setState(["attackReceived", coords, true]);
+            return true;
         } else if (ship === null) {
             this.board[coords[0]][coords[1]] = 0;
             this.subject.setState(["attackReceived", coords, false]);
+            return false;
         }
     }
 

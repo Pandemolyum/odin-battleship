@@ -58,9 +58,12 @@ function createShipNodeRemoveObserver(observedNode) {
 // Returns the child index position of the specified element relative
 // to its parent
 function getChildIndex(child) {
-    const parent = child.parentNode;
-    const children = parent.children;
-    return Array.prototype.indexOf.call(children, child);
+    if (child) {
+        const parent = child.parentNode;
+        const children = parent.children;
+        return Array.prototype.indexOf.call(children, child);
+    }
+    return null;
 }
 
 function gridIndexToCoords(gridIndex) {
@@ -179,10 +182,22 @@ function displayShipOnGrid(target, dragged, size, board) {
         coordsArr = shipCoords.map((x) => [x[0] + offset[0], x[1] + offset[1]]);
     } else {
         for (let i = 0; i < size; i++) {
-            coordsArr.push(gridIndexToCoords(getChildIndex(target)));
+            const index = getChildIndex(target);
+            coordsArr.push(gridIndexToCoords(index));
+
+            const SQUARES_PER_GRID = 100;
+            if (!index) return;
             target = target.nextElementSibling;
         }
     }
+
+    // Check if coords are out of bounds
+    if (coordsArr.at(-1)[0] > 9 || coordsArr.at(-1)[1] > 9) return;
+    if (
+        coordsArr.at(-1)[0] !== coordsArr[0][0] &&
+        coordsArr.at(-1)[1] !== coordsArr[0][1]
+    )
+        return;
 
     // Check if position does not overlap another ship unless other ship is self
     // Return if there is an overlap

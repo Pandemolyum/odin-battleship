@@ -14,10 +14,11 @@ import {
     getChildIndex,
     gridIndexToCoords,
     togglePlayerSelect,
+    toggleTurnDisplay,
 } from "./dom-controller.js";
 
 // Game state initialization
-const gameState = new Subject(); // possible states: position1, position2, combat, ended
+const gameState = new Subject(); // possible states: position1 (for p1 ship placement), position2 (for p2 ship placement), combat, ended
 const stateObserver = new Observer("stateObserver", onStateChange);
 gameState.subscribe(stateObserver);
 
@@ -46,7 +47,6 @@ const shipsRight = document.querySelector("div.right div.ships");
 createShipNodeRemoveObserver(shipsRight);
 
 // Game start
-gameState.setState("position1");
 togglePlayerSelect();
 
 // ========== FUNCTIONS ==========
@@ -92,15 +92,23 @@ function onBoardChange(state) {
 function onTurnChange(state) {
     if (!state) {
         displayShips(p1, p2, state);
+        toggleTurnDisplay("Player 1");
     } else {
         displayShips(p2, p1, state);
+        toggleTurnDisplay("Player 2");
     }
 }
 
+// Triggers when the playerTurn state changes and updates the display accordingly
 function onStateChange(state) {
     const leftSide = document.querySelector("div.left");
     const rightSide = document.querySelector("div.right");
     if (state === "position1") {
+        // Set player to human or computer as selected by the user
+        const playerSelect = document.querySelectorAll("select");
+        p1.type = playerSelect[0].value;
+        p2.type = playerSelect[1].value;
+
         playerTurn.setState(false);
         rightSide.style.display = "none";
     } else if (state === "position2") {

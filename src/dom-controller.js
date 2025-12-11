@@ -42,10 +42,7 @@ function createClickEventListeners(p1, p2, gameState) {
             gameState.setState("combat");
         } else if (e.target.id === "start-game") {
             togglePlayerSelect();
-
-            const text = document.querySelector("span.next-player");
-            text.textContent = "Player 1";
-            toggleTurnDisplay();
+            gameState.setState("position1");
         } else if (e.target.id === "continue") {
             toggleTurnDisplay();
         }
@@ -260,8 +257,10 @@ function togglePlayerSelect() {
 }
 
 // Toggles the player turn panel displayed in between 2 human player games
-function toggleTurnDisplay() {
+function toggleTurnDisplay(text = "Player 1") {
     const panel = document.getElementById("change-turn");
+    const span = document.querySelector("span.next-player");
+    span.textContent = text;
     if (panel.style.display === "none" || panel.style.display === "") {
         panel.style.display = "flex";
     } else {

@@ -13,6 +13,7 @@ import {
     undisplayShip,
     getChildIndex,
     gridIndexToCoords,
+    togglePlayerSelect,
 } from "./dom-controller.js";
 
 // Game state initialization
@@ -46,6 +47,7 @@ createShipNodeRemoveObserver(shipsRight);
 
 // Game start
 gameState.setState("position1");
+togglePlayerSelect();
 
 // ========== FUNCTIONS ==========
 // Updates the board display dynamically based on the specified board state

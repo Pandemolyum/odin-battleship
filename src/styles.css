@@ -25,6 +25,7 @@ h2 {
 
 div.container {
     display: flex;
+    align-items: center;
 }
 
 div.left,
@@ -119,4 +120,25 @@ div.ship-grid.four {
 
 button {
     margin: 3rem;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+select,
+p {
+    box-sizing: content-box;
+    margin-right: 1rem;
+    margin-top: 1rem;
 }

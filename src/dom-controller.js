@@ -40,6 +40,8 @@ function createClickEventListeners(p1, p2, gameState) {
             e.target.parentNode.classList.contains("right")
         ) {
             gameState.setState("combat");
+        } else if (e.target.id === "start-game") {
+            togglePlayerSelect();
         }
     });
 }
@@ -185,7 +187,6 @@ function displayShipOnGrid(target, dragged, size, board) {
             const index = getChildIndex(target);
             coordsArr.push(gridIndexToCoords(index));
 
-            const SQUARES_PER_GRID = 100;
             if (!index) return;
             target = target.nextElementSibling;
         }
@@ -233,11 +234,22 @@ function undisplayShip(turn, coordsArr) {
     }
 }
 
+// Removes the buttons that the player must click after placing all ships
 function removeShipPlacementButtons() {
     const buttons = document.querySelectorAll("button.confirm-placement");
 
     for (let button of buttons) {
         button.remove();
+    }
+}
+
+// Toggles the player selection panel displayed before the start of a new game
+function togglePlayerSelect() {
+    const panel = document.getElementById("player-options");
+    if (panel.style.display === "none" || panel.style.display === "") {
+        panel.style.display = "flex";
+    } else {
+        panel.style.display = "none";
     }
 }
 
@@ -253,4 +265,5 @@ export {
     undisplayShip,
     getChildIndex,
     gridIndexToCoords,
+    togglePlayerSelect,
 };

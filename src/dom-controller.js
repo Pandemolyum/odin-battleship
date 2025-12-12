@@ -53,7 +53,8 @@ function createShipNodeRemoveObserver(observedNode) {
     const observer = new MutationObserver(() => {
         if (observedNode.children.length === 0) {
             const button = observedNode.parentNode.querySelector("button");
-            button.disabled = false;
+
+            if (button) button.disabled = false;
         }
     });
 

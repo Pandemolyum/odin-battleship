@@ -78,17 +78,9 @@ function onBoardChange(state) {
             return;
         }
     }
-
-    // Execute computer player action if it is its turn
-    if (
-        gameState.state === "combat" &&
-        getCurrentPlayer().type === "computer"
-    ) {
-        getCurrentPlayer().sendAttack(getOtherPlayer().board);
-    }
 }
 
-// Updates board display based on provided state
+// Updates board display based on playerTurn state
 function onTurnChange(state) {
     if (!state) {
         displayShips(p1, p2, state);
@@ -97,9 +89,11 @@ function onTurnChange(state) {
         displayShips(p2, p1, state);
         toggleTurnDisplay("Player 2");
     }
+
+    executeComputerAction();
 }
 
-// Triggers when the playerTurn state changes and updates the display accordingly
+// Triggers when the game state changes and updates the display accordingly
 function onStateChange(state) {
     const leftSide = document.querySelector("div.left");
     const rightSide = document.querySelector("div.right");
@@ -109,12 +103,12 @@ function onStateChange(state) {
         p1.type = playerSelect[0].value;
         p2.type = playerSelect[1].value;
 
-        playerTurn.setState(false);
         rightSide.style.display = "none";
+        playerTurn.setState(false);
     } else if (state === "position2") {
-        playerTurn.setState(true);
         leftSide.style.display = "none";
         rightSide.style.display = "flex";
+        playerTurn.setState(true);
     } else if (state === "combat") {
         removeShipPlacementButtons();
         leftSide.style.display = "flex";
@@ -251,6 +245,41 @@ function onDroppedElement(dragged, cell, e) {
             p1.board.placeShip(coordsArr[0], hdirection, ship);
         } else {
             p2.board.placeShip(coordsArr[0], hdirection, ship);
+        }
+    }
+}
+
+// Execute computer player action if it is its turn
+function executeComputerAction() {
+    if (
+        gameState.state === "combat" &&
+        getCurrentPlayer().type === "computer"
+    ) {
+        getCurrentPlayer().sendAttack(getOtherPlayer().board);
+    } else if (
+        gameState.state.startsWith("position") &&
+        getCurrentPlayer().type === "computer"
+    ) {
+        toggleTurnDisplay();
+        let result;
+
+        for (let i = 0; i < 5; i++) {
+            result = false;
+            while (!result) {
+                result = getCurrentPlayer().placeShip();
+            }
+        }
+
+        if (getCurrentPlayer() === p1) {
+            const ships = document.querySelector(".left .ships");
+            ships.replaceChildren();
+
+            gameState.setState("position2");
+        } else {
+            const ships = document.querySelector(".right .ships");
+            ships.replaceChildren();
+
+            gameState.setState("combat");
         }
     }
 }

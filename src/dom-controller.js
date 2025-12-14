@@ -45,6 +45,8 @@ function createClickEventListeners(p1, p2, gameState) {
             gameState.setState("position1");
         } else if (e.target.id === "continue") {
             toggleTurnDisplay();
+        } else if (e.target.id === "new-game") {
+            window.location.reload();
         }
     });
 }
@@ -157,8 +159,13 @@ function displayGameOver(message) {
     const gameOver = document.createElement("h2");
     gameOver.textContent = message;
 
+    const button = document.createElement("button");
+    button.id = "new-game";
+    button.textContent = "New Game";
+
     const body = document.querySelector("body");
     body.appendChild(gameOver);
+    body.appendChild(button);
 }
 
 // Checks if the position of the ship is valid and if valid, removes it and

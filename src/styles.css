@@ -122,6 +122,11 @@ button {
     margin: 3rem;
 }
 
+button#new-game {
+    position: absolute;
+    top: 80vh;
+}
+
 .overlay {
     position: fixed;
     top: 0;

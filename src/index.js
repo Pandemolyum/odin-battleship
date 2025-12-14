@@ -60,11 +60,7 @@ function onBoardChange(state) {
     } else if (state[0] === "attackReceived") {
         displayAttackedSquare(playerTurn.state, state[1], state[2]);
 
-        // If the attack does not hit a ship
-        if (!state[2]) {
-            playerTurn.setState(!playerTurn.state);
-        }
-
+        // End the game
         if (getOtherPlayer().board.areAllShipsSunk()) {
             let message;
             if (getCurrentPlayer() === p1) {
@@ -74,8 +70,17 @@ function onBoardChange(state) {
             }
 
             displayGameOver(message);
+            gameState.setState("ended");
 
             return;
+        }
+
+        // If the attack does not hit a ship, change player turn
+        // Otherwise, execute computer action if applicable
+        if (!state[2]) {
+            playerTurn.setState(!playerTurn.state);
+        } else if (getCurrentPlayer().type === "computer") {
+            executeComputerAction();
         }
     }
 }
@@ -84,10 +89,12 @@ function onBoardChange(state) {
 function onTurnChange(state) {
     if (!state) {
         displayShips(p1, p2, state);
-        toggleTurnDisplay("Player 1");
+        if (p1.type === "player" && p2.type === "player")
+            toggleTurnDisplay("Player 1");
     } else {
         displayShips(p2, p1, state);
-        toggleTurnDisplay("Player 2");
+        if (p1.type === "player" && p2.type === "player")
+            toggleTurnDisplay("Player 2");
     }
 
     executeComputerAction();
@@ -260,7 +267,6 @@ function executeComputerAction() {
         gameState.state.startsWith("position") &&
         getCurrentPlayer().type === "computer"
     ) {
-        toggleTurnDisplay();
         let result;
 
         for (let i = 0; i < 5; i++) {

@@ -13,6 +13,9 @@ class Player {
 
     // Sends a random attack to the enemy board
     sendAttack(board) {
+        // Return if all squares have been hit already
+        if (this.hitCoords.length >= 100) return;
+
         // Ensure that there are squares left
         if (this.hitCoords.length <= BOARD_SIZE ** 2) {
             let x, y;

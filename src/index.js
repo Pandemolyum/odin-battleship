@@ -89,11 +89,11 @@ function onBoardChange(state) {
 function onTurnChange(state) {
     if (!state) {
         displayShips(p1, p2, state);
-        if (p1.type === "player" && p2.type === "player")
+        if (p1.type === "human" && p2.type === "human")
             toggleTurnDisplay("Player 1");
     } else {
         displayShips(p2, p1, state);
-        if (p1.type === "player" && p2.type === "player")
+        if (p1.type === "human" && p2.type === "human")
             toggleTurnDisplay("Player 2");
     }
 

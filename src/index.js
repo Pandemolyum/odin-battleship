@@ -76,11 +76,8 @@ function onBoardChange(state) {
         }
 
         // If the attack does not hit a ship, change player turn
-        // Otherwise, execute computer action if applicable
         if (!state[2]) {
             playerTurn.setState(!playerTurn.state);
-        } else if (getCurrentPlayer().type === "computer") {
-            executeComputerAction();
         }
     }
 }
@@ -262,7 +259,10 @@ function executeComputerAction() {
         gameState.state === "combat" &&
         getCurrentPlayer().type === "computer"
     ) {
-        getCurrentPlayer().sendAttack(getOtherPlayer().board);
+        let isHit = getCurrentPlayer().sendAttack(getOtherPlayer().board);
+
+        if (isHit && getCurrentPlayer().type === "computer")
+            executeComputerAction();
     } else if (
         gameState.state.startsWith("position") &&
         getCurrentPlayer().type === "computer"

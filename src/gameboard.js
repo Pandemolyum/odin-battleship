@@ -143,8 +143,8 @@ class Gameboard {
         } else if (ship === null) {
             this.board[coords[0]][coords[1]] = 0;
             this.subject.setState(["attackReceived", coords, false]);
-            return false;
         }
+        return false;
     }
 
     // Returns true if all ships on the board are sunk and false otherwise
